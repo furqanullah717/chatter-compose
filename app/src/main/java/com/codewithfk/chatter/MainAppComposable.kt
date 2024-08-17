@@ -32,13 +32,17 @@ fun MainApp() {
             composable("home") {
                 HomeScreen(navController)
             }
-            composable("chat/{channelId}", arguments = listOf(
+            composable("chat/{channelId}&{channelName}", arguments = listOf(
                 navArgument("channelId") {
+                    type = NavType.StringType
+                },
+                navArgument("channelName") {
                     type = NavType.StringType
                 }
             )) {
                 val channelId = it.arguments?.getString("channelId") ?: ""
-                ChatScreen(navController, channelId)
+                val channelName = it.arguments?.getString("channelName") ?: ""
+                ChatScreen(navController, channelId,channelName)
             }
         }
     }
