@@ -13,6 +13,8 @@ firebaseCrashlyticsBuildtools = "2.9.9"
 hilt-compose = "1.2.0"
 coil = "2.6.0"
 material3Android = "1.2.1"
+volley = "1.2.1"
+material = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +37,8 @@ dagger-hilt-compose  = {module = "androidx.hilt:hilt-navigation-compose", versio
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 coil = {module = "io.coil-kt:coil-compose" , version.ref = "coil"}
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 [plugins]

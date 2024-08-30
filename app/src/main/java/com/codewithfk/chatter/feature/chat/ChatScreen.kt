@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,6 +58,8 @@ import com.codewithfk.chatter.ui.theme.DarkGrey
 import com.codewithfk.chatter.ui.theme.Purple
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser
 import org.jetbrains.annotations.Async
 import java.io.File
 import java.text.SimpleDateFormat
@@ -122,11 +125,18 @@ fun ChatScreen(navController: NavController, channelId: String, channelName: Str
                 viewModel.listenForMessages(channelId)
             }
             val messages = viewModel.message.collectAsState()
-            ChatMessages(messages = messages.value, onSendMessage = { message ->
-                viewModel.sendMessage(channelId, message)
-            }, onImageClicked = {
-                chooserDialog.value = true
-            }, channelName = channelName)
+            ChatMessages(
+                messages = messages.value,
+                onSendMessage = { message ->
+                    viewModel.sendMessage(channelId, message)
+                },
+                onImageClicked = {
+                    chooserDialog.value = true
+                },
+                channelName = channelName,
+                viewModel = viewModel,
+                channelID = channelId
+            )
         }
 
         if (chooserDialog.value) {
@@ -166,9 +176,11 @@ fun ContentSelectionDialog(onCameraSelected: () -> Unit, onGallerySelected: () -
 @Composable
 fun ChatMessages(
     channelName: String,
+    channelID: String,
     messages: List<Message>,
     onSendMessage: (String) -> Unit,
     onImageClicked: () -> Unit,
+    viewModel: ChatViewModel
 ) {
     val hideKeyboardController = LocalSoftwareKeyboardController.current
 
@@ -178,7 +190,23 @@ fun ChatMessages(
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.weight(1f)) {
             item {
-                ChannelItem(channelName = channelName,Modifier) {}
+                ChannelItem(channelName = channelName, Modifier, true, onClick = {}, onCall = { callButton->
+                    viewModel.getAllUserEmails(channelID) {
+                        val list: MutableList<ZegoUIKitUser> = mutableListOf()
+                        it.forEach { email ->
+                            Firebase.auth.currentUser?.email?.let { em ->
+                                if(email != em){
+                                    list.add(
+                                        ZegoUIKitUser(
+                                            email, email
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        callButton.setInvitees(list)
+                    }
+                })
             }
             items(messages) { message ->
                 ChatBubble(message = message)
@@ -279,3 +307,16 @@ fun ChatBubble(message: Message) {
 
     }
 }
+
+@Composable
+fun CallButton(isVideoCall: Boolean, onClick: (ZegoSendCallInvitationButton) -> Unit) {
+    AndroidView(factory = { context ->
+        val button = ZegoSendCallInvitationButton(context)
+        button.setIsVideoCall(isVideoCall)
+        button.resourceID = "zego_data"
+        button
+    }, modifier = Modifier.size(50.dp)) { zegoCallButton ->
+        zegoCallButton.setOnClickListener { _ -> onClick(zegoCallButton) }
+    }
+}
+
