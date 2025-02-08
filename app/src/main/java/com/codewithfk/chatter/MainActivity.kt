@@ -18,12 +18,12 @@ import com.codewithfk.chatter.ui.theme.ChatterTheme
 import com.permissionx.guolindev.PermissionX
 import com.zegocloud.uikit.internal.ZegoUIKitLanguage
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService
+import com.zegocloud.uikit.prebuilt.call.core.invite.ZegoCallInvitationData
 import com.zegocloud.uikit.prebuilt.call.event.CallEndListener
 import com.zegocloud.uikit.prebuilt.call.event.ErrorEventsListener
 import com.zegocloud.uikit.prebuilt.call.event.SignalPluginConnectListener
 import com.zegocloud.uikit.prebuilt.call.event.ZegoCallEndReason
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig
-import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoTranslationText
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider
 import dagger.hilt.android.AndroidEntryPoint

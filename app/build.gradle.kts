@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.codewithfk.chatter"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -93,4 +93,13 @@ dependencies {
 
     implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
     implementation("com.guolindev.permissionx:permissionx:1.8.0")
+
+    implementation ("io.github.jan-tennert.supabase:storage-kt:1.4.7")
+    implementation ("io.github.jan-tennert.supabase:compose-auth:1.4.7")
+
+    val ktor_version = "2.3.13"
+    implementation ("io.ktor:ktor-client-android:$ktor_version")
+    implementation ("io.ktor:ktor-client-core:$ktor_version")
+    implementation ("io.ktor:ktor-utils:$ktor_version")
+
 }

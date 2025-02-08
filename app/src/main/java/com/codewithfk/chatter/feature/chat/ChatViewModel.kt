@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.codewithfk.chatter.R
+import com.codewithfk.chatter.SupabaseStorageUtils
 import com.codewithfk.chatter.model.Channel
 import com.codewithfk.chatter.model.Message
 import com.google.auth.oauth2.GoogleCredentials
@@ -24,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.UUID
 import javax.inject.Inject
@@ -56,19 +59,11 @@ class ChatViewModel @Inject constructor(@ApplicationContext val context: Context
     }
 
     fun sendImageMessage(uri: Uri, channelID: String) {
-        val imageRef = Firebase.storage.reference.child("images/${UUID.randomUUID()}")
-        imageRef.putFile(uri).continueWithTask { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let {
-                    throw it
-                }
-            }
-            imageRef.downloadUrl
-        }.addOnCompleteListener { task ->
-            val currentUser = Firebase.auth.currentUser
-            if (task.isSuccessful) {
-                val downloadUri = task.result
-                sendMessage(channelID, null, downloadUri.toString())
+        viewModelScope.launch {
+            val storageUtils = SupabaseStorageUtils(context)
+            val downloadUri = storageUtils.uploadImage(uri)
+            downloadUri?.let {
+                sendMessage(channelID, null, downloadUri)
             }
         }
     }
